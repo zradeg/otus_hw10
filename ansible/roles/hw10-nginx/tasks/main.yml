@@ -1,0 +1,32 @@
+---
+- name: NGINX | Install EPEL Repo package from standart repo
+  yum:
+    name: epel-release
+    state: present
+  tags:
+    - epel-package
+    - packages
+
+- name: NGINX | Install nginx package from EPEL Repo
+  yum:
+    name: nginx
+    state: latest
+  notify:
+    - restart nginx
+  tags:
+    - nginx-package
+    - packages
+
+- name: NGINX | Create NGINX config file from template
+  template:
+    src: ../templates/nginx.conf.j2
+    dest: /etc/nginx/nginx.conf
+  notify:
+    - reload nginx
+  tags:
+    - nginx-configuration
+
+- name: NGINX | Create test page
+  command: echo Hello ansible > /usr/share/nginx/html/index.html
+  tags:
+    - nginx-testpage
